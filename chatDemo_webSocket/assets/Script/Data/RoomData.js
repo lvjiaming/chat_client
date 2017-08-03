@@ -4,6 +4,7 @@ const RoomEvent = {
     CREATE_ROOM_FUC: "cteate_fuc",
     ENTER_ROOM_FUC: "enter_room_fuc",
     USER_ENTER: "user_enter",
+    USER_LEAVE_PUSH: "user_leave_push",
 };
 cc.dd.RoomEvent = RoomEvent;
 const RoomEM = cc.Class({
@@ -55,6 +56,14 @@ const RoomData = cc.Class({
     otherPlayerEnter(data) {
         this.userList.push(data);
         cc.dd.RoomEM.notifyEvent(cc.dd.RoomEvent.USER_ENTER, data.user);
+    },
+    otherPlayerLeave(data) {
+        this.userList.forEach((item) => {
+            if (item === data.nickName) {
+                cc.log(`将玩家${item}从玩家列表移除`);
+            }
+        });
+        cc.dd.RoomEM.notifyEvent(cc.dd.RoomEvent.USER_LEAVE_PUSH, data.nickName);
     },
     enterRoom(data) {
         if (data.code === -1) {

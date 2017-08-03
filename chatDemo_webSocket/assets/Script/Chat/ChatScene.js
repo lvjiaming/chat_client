@@ -52,6 +52,7 @@ cc.Class({
     },
     addUser(nickName) {
         const UserNode = new cc.Node('user');
+        UserNode.nickName = nickName;
         const labelComp = UserNode.addComponent(cc.Label);
         labelComp.string = nickName;
         this.userList.addChild(UserNode);
@@ -59,6 +60,14 @@ cc.Class({
         UserNode.width = 200;
         labelComp.fontSize = 30;
         labelComp.lineHeight = 35;
+    },
+    removeUser(data) {
+        const users = this.userList.children;
+        users.forEach((item) => {
+            if (item.nickName === data) {
+                item.destroy();
+            }
+        });
     },
     updataMessageTool(data) {
         cc.log(`刷新消息栏内容`);
@@ -82,6 +91,18 @@ cc.Class({
             }
             case cc.dd.chatEvent.EVENT_SEND_MEG_REP: {
                 this.updataMessageTool(data);
+                break;
+            }
+            case cc.dd.chatEvent.EVENT_LEAVE_ROOM_REP: {  //  离开房间的回复
+                if (data.code === 100) {
+                    cc.director.loadScene("HallScene");
+                } else {
+                    cc.log(`离开失败`)
+                }
+                break;
+            }
+            case cc.dd.RoomEvent.USER_LEAVE_PUSH: {
+                this.removeUser(data);
                 break;
             }
             default: {
